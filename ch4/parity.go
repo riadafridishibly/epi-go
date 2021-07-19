@@ -61,3 +61,26 @@ func ParityRemoveLowestSetBit(x int) int {
 
 	return res
 }
+
+const cacheSize = 1 << 16
+
+func preComputeParity() [cacheSize]int {
+	var cache [cacheSize]int
+	for i := 0; i < cacheSize; i++ {
+		cache[i] = ParityRemoveLowestSetBit(i)
+	}
+
+	return cache
+}
+
+var parityCache = preComputeParity()
+
+func ParityUsingCache(x int) int {
+	mask := 0xffff
+	maskSize := 16
+
+	return parityCache[x&mask] ^
+		parityCache[(x>>maskSize)&mask] ^
+		parityCache[(x>>maskSize*2)&mask] ^
+		parityCache[(x>>maskSize*3)&mask]
+}
